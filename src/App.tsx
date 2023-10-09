@@ -1,27 +1,28 @@
-import { useState } from 'react';
 import './App.css'
 import { Box, Button, Flex, Spacer, Text } from '@chakra-ui/react'
-import { Memories } from './Memories';
+import { DayMemories } from './DayMemories';
+import { Memory } from './Memory';
 
 function App() {
   
-  // useStateで記録（日付、種目、重量,回数を管理
-  const [memories, setMemories] = useState([
-      new Memories("2023/7/19", "ベンチ", "20kg", "10rep"),
-      new Memories("2023/7/19", "ベンチ", "20kg", "10rep"),
-      new Memories("2023/7/19", "ベンチ", "20kg", "10rep"),
-      new Memories("2023/7/20", "ベンチ", "20kg", "10rep"),
-      new Memories("2023/7/20", "ベンチ", "20kg", "10rep"),
-    ]
+  const record1 = new Memory("1", "menu1", 100, 15)
+  const record2 = new Memory("2", "menu2", 100, 15)
+  const record3 = new Memory("3", "menu3", 100, 15)
+
+  const today = new DayMemories(
+    "2023/10/10",
+    [record1, record2, record3]
   )
+
+  // useStateで記録（日付、種目、重量,回数を管理
 
   return (
     <Box w="600px" mx="auto" mt="100px">
-      {memories.map((memory, index) => {
+      {today.map((record,index) => {
           return (
             <>
               <Text fontSize="2xl" as="b">
-                {memory.date}
+                {record.date}
               </Text>
               <Flex w="100%" mt={2} alignItems="center" mb="50px">
                 <Flex
@@ -34,7 +35,7 @@ function App() {
                   bg="blackAlpha.800"
                   borderRadius="5px"
                 >
-                  {memory.menu}
+                  {record.menu}
                 </Flex>
                 <Flex
                   w="380px"
@@ -47,17 +48,17 @@ function App() {
                   borderRadius="5px"
                 >
                   <Spacer />
-                  <Text>{memory.weight}</Text>
+                  <Text>{record.weight}</Text>
                   <Spacer />
-                  <Text>{memory.rep}</Text>
+                  <Text>{record.rep}</Text>
                   <Spacer />
                 </Flex>
                 <Button colorScheme="red">削除</Button>
               </Flex>
             </>
           );
-        })}
-      </Box>
+      })}
+    </Box>
   );
 }
 
