@@ -86,6 +86,10 @@ function App() {
       ]);
     }
     onClose();
+    setDateInput("");
+    setMenuInput("");
+    setWeightInput(0);
+    setRepInput(0);
   };
 
   return (
@@ -101,7 +105,7 @@ function App() {
         <Box w="600px" mx="auto" mt="50px">
           {records.map((record) => {
             return (
-              <Box mb="50px">
+              <Box mb="30px">
                 <Text fontSize="2xl" as="b">
                   {record.date}
                 </Text>
