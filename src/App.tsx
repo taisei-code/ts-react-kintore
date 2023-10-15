@@ -92,6 +92,15 @@ function App() {
     setRepInput(0);
   };
 
+  // キャンセル ・ × を押したらモーダルが閉じる
+  const modalClose = () => {
+    onClose();
+    setDateInput("");
+    setMenuInput("");
+    setWeightInput(0);
+    setRepInput(0);
+  };
+
   return (
     <>
       <Header />
@@ -135,12 +144,14 @@ function App() {
                         borderRadius="5px"
                       >
                         <Spacer />
-                        <Text>{memory.weight}</Text>
+                        <Text>{memory.weight}kg</Text>
                         <Spacer />
-                        <Text>{memory.rep}</Text>
+                        <Text>{memory.rep}rep</Text>
                         <Spacer />
                       </Flex>
-                      <Button colorScheme="red">削除</Button>
+                      <Button colorScheme="red" h="50px">
+                        削除
+                      </Button>
                     </Flex>
                   );
                 })}
@@ -153,7 +164,7 @@ function App() {
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>新規登録</ModalHeader>
-            <ModalCloseButton />
+            <ModalCloseButton onClick={modalClose} />
             <ModalBody pb={6}>
               <Box mb={4}>
                 <Text mb={2}>日付</Text>
@@ -194,7 +205,12 @@ function App() {
               </Box>
               <Box>
                 <Text mb={2}>Rep</Text>
-                <NumberInput width="50%" value={repInput} defaultValue={0} onChange={(e) => repChange(e)}>
+                <NumberInput
+                  width="50%"
+                  value={repInput}
+                  defaultValue={0}
+                  onChange={(e) => repChange(e)}
+                >
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -220,7 +236,7 @@ function App() {
               >
                 登録
               </Button>
-              <Button onClick={onClose}>Cancel</Button>
+              <Button onClick={modalClose}>Cancel</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
