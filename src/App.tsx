@@ -18,7 +18,8 @@ function App() {
   // モダール入力値
   const [dateInput, setDateInput] = useState("");
   const [menuInput, setMenuInput] = useState("");
-  const [weightInput, setWeightInput] = useState("");
+  const [weightInput, setWeightInput] = useState(0);
+  const [repInput, setRepInput] = useState(0);
 
   // バリデーション（日付、種目、重量）
   const [dateError, setDateError] = useState<string>("");
@@ -43,8 +44,9 @@ function App() {
     setMenuInput(menu);
   };
 
-  const weightChange = (weight: string) => {
-    if (weight == "") {
+  const weightChange = (weightStr: string) => {
+    const weight = Number(weightStr)
+    if (weight == 0) {
       setWeightError("重量を選択してください");
     } else {
       setWeightError("");
@@ -52,14 +54,37 @@ function App() {
     setWeightInput(weight);
   };
 
+  const repChange = (repStr: string) => {
+    const rep = Number(repStr)
+    setRepInput(rep)
+  }
+
   const createMemory = () => {
     onOpen();
   };
 
   const registerMemory = () => {
-    const newMemories = [...records]
-    console.log(newMemories);
-    setRecords([...records, { memories: new DayMemory[] }]);
+    if (records.some((record) => record.date == dateInput)) {
+      const newRecords = records.map((record) => {
+        if (record.date == dateInput) {
+          return new DayMemories(record.id, record.date, [ ...record.memories, new Memory((Math.random() * 10000).toString(), menuInput, weightInput, repInput) ]);
+        } 
+          return record;
+      })
+      setRecords(newRecords)
+    } else {
+      setRecords([
+        ...records,
+        new DayMemories((Math.random() * 10000).toString(), dateInput, [
+          new Memory(
+            (Math.random() * 10000).toString(),
+            menuInput,
+            weightInput,
+            repInput
+          ),
+        ]),
+      ]);
+    }
     onClose();
   };
 
@@ -144,9 +169,9 @@ function App() {
                   value={menuInput}
                   onChange={(e) => menuChange(e.target.value)}
                 >
-                  <option value="option1">ベンチプレス</option>
-                  <option value="option2">スクワット</option>
-                  <option value="option3">デットリフト</option>
+                  <option value="ベンチプレス">ベンチプレス</option>
+                  <option value="スクワット">スクワット</option>
+                  <option value="デットリフト">デットリフト</option>
                 </Select>
                 <Text color="red">{menuError}</Text>
               </Box>
@@ -157,15 +182,15 @@ function App() {
                   value={weightInput}
                   onChange={(e) => weightChange(e.target.value)}
                 >
-                  <option value="option1">80kg</option>
-                  <option value="option2">90kg</option>
-                  <option value="option3">100kg</option>
+                  <option value={80}>80kg</option>
+                  <option value={90}>90kg</option>
+                  <option value={100}>100kg</option>
                 </Select>
                 <Text color="red">{weightError}</Text>
               </Box>
               <Box>
                 <Text mb={2}>Rep</Text>
-                <NumberInput width="50%" defaultValue={0}>
+                <NumberInput width="50%" value={repInput} defaultValue={0} onChange={(e) => repChange(e)}>
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -183,7 +208,7 @@ function App() {
                 isDisabled={
                   dateInput == "" ||
                   menuInput == "" ||
-                  weightInput == "" ||
+                  weightInput == 0 ||
                   dateError != "" ||
                   menuError != "" ||
                   weightError != ""
