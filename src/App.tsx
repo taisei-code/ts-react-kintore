@@ -14,6 +14,7 @@ function App() {
 
   // useStateで記録（日付、種目、重量,回数）を管理
   const [records, setRecords] = useState([today]);
+  
 
   // モダール入力値
   const [dateInput, setDateInput] = useState("");
@@ -59,10 +60,12 @@ function App() {
     setRepInput(rep)
   }
 
+  // モーダルを開く
   const createMemory = () => {
     onOpen();
   };
 
+  // 筋トレの記録をモーダルで登録する
   const registerMemory = () => {
     if (records.some((record) => record.date == dateInput)) {
       const newRecords = records.map((record) => {
@@ -101,6 +104,16 @@ function App() {
     setRepInput(0);
   };
 
+  // 筋トレの記録を削除する
+  const deleteMemory = (id: string) => {
+
+    const newDayMemories = records.map((record: DayMemories) => {
+      const deletedMemories = record.memories.filter((memory) => memory.id != id);
+      return new DayMemories(record.id, record.date, deletedMemories);
+    })
+    setRecords(newDayMemories)
+  };
+
   return (
     <>
       <Header />
@@ -114,50 +127,61 @@ function App() {
         <Box w="600px" mx="auto" mt="50px">
           {records.map((record) => {
             return (
-              <Box mb="30px">
-                <Text fontSize="2xl" as="b">
-                  {record.date}
-                </Text>
-                {record.memories.map((memory) => {
-                  return (
-                    <Flex w="100%" mt={2} alignItems="center">
-                      <Flex
-                        w="200px"
-                        h="50px"
-                        mr="20px"
-                        px={5}
-                        alignItems="center"
-                        color="#fff"
-                        bg="blackAlpha.800"
-                        borderRadius="5px"
-                      >
-                        {memory.menu}
+              record.memories.length !== 0 && (
+                <Box key={record.id} mb="30px">
+                  <Text fontSize="2xl" as="b">
+                    {record.date}
+                  </Text>
+                  {record.memories.map((memory) => {
+                    return (
+                      <Flex key={memory.id} w="100%" mt={2} alignItems="center">
+                        <Flex
+                          w="200px"
+                          h="50px"
+                          mr="20px"
+                          px={5}
+                          alignItems="center"
+                          color="#fff"
+                          bg="blackAlpha.800"
+                          borderRadius="5px"
+                        >
+                          {memory.menu}
+                        </Flex>
+                        <Flex
+                          w="380px"
+                          h="50px"
+                          mr="20px"
+                          px={5}
+                          alignItems="center"
+                          color="#fff"
+                          bg="blackAlpha.800"
+                          borderRadius="5px"
+                        >
+                          <Spacer />
+                          <Text>{memory.weight}kg</Text>
+                          <Spacer />
+                          <Text>{memory.rep}rep</Text>
+                          <Spacer />
+                        </Flex>
+                        <Button
+                          colorScheme="red"
+                          h="50px"
+                          onClick={() => deleteMemory(memory.id)}
+                        >
+                          削除
+                        </Button>
                       </Flex>
-                      <Flex
-                        w="380px"
-                        h="50px"
-                        mr="20px"
-                        px={5}
-                        alignItems="center"
-                        color="#fff"
-                        bg="blackAlpha.800"
-                        borderRadius="5px"
-                      >
-                        <Spacer />
-                        <Text>{memory.weight}kg</Text>
-                        <Spacer />
-                        <Text>{memory.rep}rep</Text>
-                        <Spacer />
-                      </Flex>
-                      <Button colorScheme="red" h="50px">
-                        削除
-                      </Button>
-                    </Flex>
-                  );
-                })}
-              </Box>
+                    );
+                  })}
+                </Box>
+              )
             );
           })}
+             
+            
+            
+            
+            
         </Box>
 
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -209,7 +233,7 @@ function App() {
                   width="50%"
                   value={repInput}
                   defaultValue={0}
-                  onChange={(e) => repChange(e)}
+                  onChange={(value) => repChange(value)}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
